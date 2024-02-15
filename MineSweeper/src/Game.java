@@ -1,9 +1,13 @@
 import java.util.ArrayList;
 
 public class Game {
+    private Tile[][] testBoard = new Tile[5][5];
+
     private Tile[][] easyBoard = new Tile[9][9];
     private Tile[][] mediumBoard = new Tile[16][16];
     private Tile[][] hardBoard = new Tile[30][16];
+
+    private ArrayList<Tile> revealed = new ArrayList<Tile>();
 
     private int mines;
 
@@ -11,8 +15,11 @@ public class Game {
     private Tile[][] gameBoard;
 
     //d1 = easy, d2=medium, d3=jard
-    public Game(int difficulty){
-        if(difficulty==1) {
+    public Game(int difficulty) {
+        if(difficulty==-1){
+            gameBoard = testBoard;
+            mines=2;
+        }else if(difficulty==1) {
             gameBoard = easyBoard;
             mines=10;
         } else if (difficulty==2) {
@@ -44,11 +51,63 @@ public class Game {
                         mines++;
                     }
                 }
-                gameBoard[i][j] = new Tile(mine);
-                gameBoard[i][j].setShow(true);
+                gameBoard[i][j] = new Tile(mine, i, j);
+                //gameBoard[i][j].setShow(true);
             }
         }
+        ArrayList<Tile> neighbours = new ArrayList<Tile>();
+        getNeighbours(r, c, neighbours);
+        for(Tile neighbour: neighbours){
+            neighbour.setMine(false);
+        }
         iniitialiseCounts();
+        updateBoardClick(r, c);
+    }
+
+    //reveal new numbers/empty spaces
+    public int updateBoardClick(int r, int c){
+        //first check if it's a bomb
+        if(gameBoard[r][c].isMine()){
+            gameOver();
+            return -1;
+        }else{
+            gameBoard[r][c].setShow(true);
+            ArrayList<Tile> neighbours = new ArrayList<Tile>();
+            getNeighbours(r, c, neighbours);
+            for(Tile neighbour:neighbours){
+                int temp = expand(neighbour);
+            }
+        }
+        return 0;
+    }
+
+    //expand on the tile
+    public int expand(Tile tile){
+        if(tile.isShow()){
+            return 1;
+        }else if (tile.count>0){
+            tile.setShow(true);
+            return 1;
+        }else if(tile.isFlag()){
+            return 1;
+        }else if(tile.isMine()){
+            return 1;
+        }else{
+            //Expand
+            tile.setShow(true);
+            ArrayList<Tile> neighbours = new ArrayList<Tile>();
+            getNeighbours(tile.getRow(), tile.getCol(), neighbours);
+            for(Tile neighbour : neighbours){
+                expand(neighbour);
+            }
+        }
+        return -1;
+    }
+
+    //Game over! set all squares to x or something @todo
+    public void gameOver(){
+
+
     }
 
     public void iniitialiseCounts(){
@@ -61,6 +120,7 @@ public class Game {
                     for(Tile tile : surrounding){
                         tile.count++;
                     }
+                    surrounding.clear();
                 }
             }
         }
@@ -117,7 +177,7 @@ public class Game {
             surrounding.add(gameBoard[r-1][c+1]);
             surrounding.add(gameBoard[r-1][c]);
         } else if (firstColumn){
-            //first those in the same column @todo
+            //first those in the same column
             surrounding.add(gameBoard[r-1][c]);
             surrounding.add(gameBoard[r+1][c]);
             //then those in the column after
@@ -132,7 +192,18 @@ public class Game {
             surrounding.add(gameBoard[r-1][c-1]);
             surrounding.add(gameBoard[r+1][c-1]);
             surrounding.add(gameBoard[r][c-1]);
+        } else{
+            //add all - should be 8
+            surrounding.add(gameBoard[r-1][c-1]);
+            surrounding.add(gameBoard[r-1][c]);
+            surrounding.add(gameBoard[r-1][c+1]);
 
+            surrounding.add(gameBoard[r+1][c-1]);
+            surrounding.add(gameBoard[r+1][c]);
+            surrounding.add(gameBoard[r+1][c+1]);
+
+            surrounding.add(gameBoard[r][c-1]);
+            surrounding.add(gameBoard[r][c+1]);
         }
         //@todo test
     }
@@ -140,9 +211,15 @@ public class Game {
     public void printBoard(){
         System.out.print("    |");
         for (int i = 0; i < gameBoard[0].length; i++){
-            System.out.print("    ");
-            System.out.print(i);
-            System.out.print("    |");
+            if(i<10){
+                System.out.print("    ");
+                System.out.print(i);
+                System.out.print("    |");
+            }else{
+                System.out.print("    ");
+                System.out.print(i);
+                System.out.print("   |");
+            }
         }
         System.out.println();
         for (int i = 0; i < gameBoard.length; i++){
@@ -151,7 +228,12 @@ public class Game {
                 System.out.print("---------+");
             }
             System.out.println();
-            System.out.print("  " + i + " |");
+            if(i<10){
+                System.out.print("  " + i + " |");
+            }else{
+                System.out.print(" " + i + " |");
+            }
+            //System.out.print("  " + i + " |");
             for (int j = 0; j < gameBoard[0].length; j++){
                 int spaces = 8;
                 for (int k = 0; k < spaces; k++){

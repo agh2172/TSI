@@ -29,7 +29,7 @@ public class Main {
 
         //double cost = 5; //$5/pot, pick whatever
         //double size = 1; //pot of paint size in litres
-
+        //test change
         double newArea = 0;
 
         String shape = "RECT"; //RECT (rectangular), TRI (triangular prism), CIRC (circular), SEMI (semi circular), DOOR (door/window to subtract)

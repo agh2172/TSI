@@ -5,6 +5,7 @@ public class Tile {
     private int row;
 
     private int col;
+    private boolean show;
 
 
     private boolean flag;
@@ -36,9 +37,6 @@ public class Tile {
         this.show = show;
     }
 
-    //show?
-    private boolean show;
-
     public Tile(boolean mine, int r, int c){
         count=0;
         show=false;
@@ -49,6 +47,9 @@ public class Tile {
     }
 
     public String toString(){
+        if(isFlag()){
+            return "⚑";
+        }
         if(show){
             if(mine){
                 return "!";

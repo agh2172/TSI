@@ -1,6 +1,10 @@
 import java.util.ArrayList;
 
 public class Game {
+
+    private boolean gameOver = false;
+
+    private boolean lost = false;
     private Tile[][] testBoard = new Tile[5][5];
 
     private Tile[][] easyBoard = new Tile[9][9];
@@ -8,6 +12,10 @@ public class Game {
     private Tile[][] hardBoard = new Tile[30][16];
 
     private ArrayList<Tile> revealed = new ArrayList<Tile>();
+
+    private int rowSize, colSize;
+
+
 
     private int mines;
 
@@ -29,6 +37,8 @@ public class Game {
             gameBoard = hardBoard;
             mines=99;
         }
+        colSize=gameBoard[0].length;
+        rowSize=gameBoard.length;
     }
 
     //Upon first move, initialise board
@@ -64,10 +74,22 @@ public class Game {
         updateBoardClick(r, c);
     }
 
+
+    //@todo implement, return true if successful, false otherwise
+    public boolean placeFlag(int r, int c){
+        if(gameBoard[r][c].isFlag() || gameBoard[r][c].isShow()){
+            return false;
+        }else{
+            gameBoard[r][c].setFlag(true);
+            return true;
+        }
+    }
+
     //reveal new numbers/empty spaces
     public int updateBoardClick(int r, int c){
         //first check if it's a bomb
         if(gameBoard[r][c].isMine()){
+            lost = true;
             gameOver();
             return -1;
         }else{
@@ -106,8 +128,7 @@ public class Game {
 
     //Game over! set all squares to x or something @todo
     public void gameOver(){
-
-
+        gameOver = true;
     }
 
     public void iniitialiseCounts(){
@@ -127,7 +148,6 @@ public class Game {
     }
 
     private void getNeighbours(int r, int c, ArrayList<Tile> surrounding){
-        //@todo
         int rowL = gameBoard.length;
         int colL = gameBoard[0].length;
         boolean bottomRow = false;
@@ -185,7 +205,7 @@ public class Game {
             surrounding.add(gameBoard[r+1][c+1]);
             surrounding.add(gameBoard[r][c+1]);
         } else if (lastColumn){
-            //first those in the same column @todo
+            //first those in the same column
             surrounding.add(gameBoard[r+1][c]);
             surrounding.add(gameBoard[r-1][c]);
             //then those in the column before
@@ -205,7 +225,6 @@ public class Game {
             surrounding.add(gameBoard[r][c-1]);
             surrounding.add(gameBoard[r][c+1]);
         }
-        //@todo test
     }
 
     public void printBoard(){
@@ -247,4 +266,15 @@ public class Game {
     }
 
 
+    public int getRowSize() {
+        return rowSize;
+    }
+
+    public int getColSize() {
+        return colSize;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
 }

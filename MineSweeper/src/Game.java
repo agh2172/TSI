@@ -5,6 +5,7 @@ public class Game {
     private boolean gameOver = false;
 
     private boolean lost = false;
+    private boolean won = false;
     private Tile[][] testBoard = new Tile[5][5];
 
     private Tile[][] easyBoard = new Tile[9][9];
@@ -14,8 +15,6 @@ public class Game {
     private ArrayList<Tile> revealed = new ArrayList<Tile>();
 
     private int rowSize, colSize;
-
-
 
     private int mines;
 
@@ -76,11 +75,11 @@ public class Game {
 
 
     //@todo implement, return true if successful, false otherwise
-    public boolean placeFlag(int r, int c){
-        if(gameBoard[r][c].isFlag() || gameBoard[r][c].isShow()){
+    public boolean placeFlag(int r, int c, boolean place){
+        if(gameBoard[r][c].isShow()){
             return false;
         }else{
-            gameBoard[r][c].setFlag(true);
+            gameBoard[r][c].setFlag(place);
             return true;
         }
     }
@@ -89,6 +88,9 @@ public class Game {
     public int updateBoardClick(int r, int c){
         //first check if it's a bomb
         if(gameBoard[r][c].isMine()){
+            if(gameBoard[r][c].isFlag()){
+                return -1;
+            }
             lost = true;
             gameOver();
             return -1;
@@ -100,6 +102,9 @@ public class Game {
                 int temp = expand(neighbour);
             }
         }
+        //check if they won
+        won = checkWin();
+        if(won) gameOver=true;
         return 0;
     }
 
@@ -107,12 +112,12 @@ public class Game {
     public int expand(Tile tile){
         if(tile.isShow()){
             return 1;
-        }else if (tile.count>0){
-            tile.setShow(true);
-            return 1;
-        }else if(tile.isFlag()){
-            return 1;
         }else if(tile.isMine()){
+            return 1;
+        }else if(tile.isFlag()) {
+            return 1;
+        } else if (tile.count>0){
+            tile.setShow(true);
             return 1;
         }else{
             //Expand
@@ -126,9 +131,31 @@ public class Game {
         return -1;
     }
 
-    //Game over! set all squares to x or something @todo
+    //Game over! set all squares to x or something - specifically for a loss
     public void gameOver(){
         gameOver = true;
+        for (int i=0; i< rowSize; i++){
+            for (int j=0; j< colSize; j++){
+                gameBoard[i][j].setMine(true);
+                System.out.print("\033[1;31m");
+                gameBoard[i][j].setShow(true);
+            }
+        }
+    }
+
+    //method to check if you've w
+    //win condition: all safe blocks opened
+    public boolean checkWin(){
+        Tile temp;
+        for (int i=0; i< rowSize; i++){
+            for (int j=0; j< colSize; j++){
+                temp = gameBoard[i][j];
+                if(!temp.isShow()&&!temp.isMine()){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     public void iniitialiseCounts(){
@@ -276,5 +303,9 @@ public class Game {
 
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    public boolean isLost() {
+        return lost;
     }
 }

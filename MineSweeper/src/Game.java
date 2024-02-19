@@ -43,7 +43,7 @@ public class Game {
     //Upon first move, initialise board
     public void initialiseBoard(int r, int c){
         int mineCount=0;
-        double threshold = (double) mines /(easyBoard.length*easyBoard[0].length)*1.15;
+        double threshold = (double) mines /(gameBoard.length*gameBoard[0].length);
         //System.out.println("Threshold: " + threshold);
         boolean mine = false;
         double random = 0;
@@ -74,7 +74,7 @@ public class Game {
     }
 
 
-    //@todo implement, return true if successful, false otherwise
+    //return true if successful, false otherwise
     public boolean placeFlag(int r, int c, boolean place){
         if(gameBoard[r][c].isShow()){
             return false;

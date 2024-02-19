@@ -6,6 +6,12 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         play();
+
+
+        //testing GUI
+        //GameGUI mine = new GameGUI();
+        //mine.start();
+
     }
 
     public static void play(){
@@ -19,7 +25,6 @@ public class Main {
                 "or 3 for Ultimate Minesweeper (30x16)");
         String input = reader.next();
         int diff = Integer.parseInt(input);
-        //@todo add input validation
 
         Game minesweeper =  new Game(diff);
         String difficulty = "";
@@ -36,6 +41,9 @@ public class Main {
             case -1 ->{
                 difficulty = "testing mode - for devs only";
             }
+            default -> {
+                difficulty = "easy";
+            }
         }
         System.out.println("You have chosen " + difficulty + ", good luck!\n" +
                 "The coordinates start at 0,0\n");
@@ -48,7 +56,7 @@ public class Main {
 
 
         //bulk of game here
-        while(!minesweeper.isGameOver()){ //@todo
+        while(!minesweeper.isGameOver()){
             //Ask if they want to place a flag or click on a new tile
             get_move(minesweeper);
             minesweeper.printBoard();
@@ -61,6 +69,7 @@ public class Main {
             System.out.print("\033[1;31m");
             System.out.println("GAME OVER");
         }else{ //or they won
+            System.out.print("\033[4;32m");
             System.out.println("CONGRATULATIONS, you have cleared the minefield!");
         }
     }

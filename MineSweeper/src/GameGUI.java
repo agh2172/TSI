@@ -88,12 +88,15 @@ public class GameGUI {
         //easy 9x9
         //medium 16x16
         //hard 30x16
-        frame.add(new MyPanel());
-        frame.pack();
-        frame.setVisible(true);
+
         //frame.dispose();
         frame.getContentPane().removeAll();
         frame.repaint();
+
+        frame.setSize(frameWidth,frameHeight);
+        frame.add(new MyPanel());
+        frame.pack();
+        frame.setVisible(true);
 //        System.out.println("In drawBoardFirst");
 //
 //        int rowNum = 0, colNum = 0, squareSize;
@@ -123,22 +126,4 @@ public class GameGUI {
     }
 
 
-}
-
-class MyPanel extends JPanel {
-
-    public MyPanel() {
-        setBorder(BorderFactory.createLineBorder(Color.black));
-    }
-
-    public Dimension getPreferredSize() {
-        return new Dimension(250,200);
-    }
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        // Draw Text
-        g.drawRect(10, 10,10,20);
-    }
 }
